@@ -20,27 +20,48 @@
         }
 
         .btn-asistente:hover {
-            background: #d4af37;
+            background: #131005;
             color: #0a0a0a;
             transform: scale(1.05);
         }
 
-        .modal-checkout {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: white;
-            padding: 30px 35px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            width: 420px;
-            max-width: 90%;
-            z-index: 400;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s ease;
-        }
+       .modal-checkout {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: white;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    width: 420px;
+    max-width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 400;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+}
+
+/* Scrollbar elegante */
+.modal-checkout::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-checkout::-webkit-scrollbar-track {
+    background: #f0ede8;
+    border-radius: 10px;
+}
+
+.modal-checkout::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 10px;
+}
+
+.modal-checkout::-webkit-scrollbar-thumb:hover {
+    background: #c19e2e;
+}
 
         .modal-checkout.abierto {
             opacity: 1;
@@ -534,6 +555,66 @@
             .header h1 { font-size: 20px; letter-spacing: 4px; }
             .carrito-panel { width: 100%; }
         }
+                /* ========== OPCIONES DE PAGO ========== */
+        .opciones-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .opcion-pago {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .opcion-pago:hover {
+            border-color: #d4af37;
+            background: #faf8f5;
+        }
+
+        .opcion-pago input[type="radio"] {
+            accent-color: #d4af37;
+        }
+
+        .opcion-pago input[type="radio"]:checked + span {
+            font-weight: bold;
+            color: #0a0a0a;
+        }
+
+        /* ========== RESUMEN DE CHECKOUT ========== */
+        .resumen-checkout {
+            margin-top: 20px;
+            padding: 16px;
+            background: #faf8f5;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .resumen-linea {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 6px 0;
+            color: #666;
+        }
+
+        .resumen-linea.total {
+            border-top: 1px solid #ddd;
+            margin-top: 8px;
+            padding-top: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0a0a0a;
+        }
     </style>
 </head>
 <body>
@@ -565,34 +646,11 @@
         🛒 <span id="total-items">0</span>
     </div>
 
-    <!-- ========== PANEL CARRITO ========== -->
+    <!-- ========== OVERLAY DEL CARRITO ========== -->
     <div class="overlay" id="overlay" onclick="cerrarCarrito()"></div>
+
+    <!-- ========== PANEL CARRITO LATERAL ========== -->
     <aside class="carrito-panel" id="carrito-panel">
-            <!-- ========== MODAL DE CHECKOUT ========== -->
-    <div class="overlay" id="overlay-checkout" onclick="cerrarCheckout()"></div>
-    <div class="modal-checkout" id="modal-checkout">
-        <h2>FINALIZAR COMPRA</h2>
-        <p class="modal-subtitulo">Ingresa tus datos para completar el pedido</p>
-
-        <label for="checkout-nombre">Nombre completo *</label>
-        <input type="text" id="checkout-nombre" placeholder="Ej: Juan Pérez" autocomplete="name">
-
-        <label for="checkout-dni">DNI *</label>
-        <input type="text" id="checkout-dni" placeholder="Ej: 12345678" autocomplete="off">
-
-        <label for="checkout-email">Email (opcional)</label>
-        <input type="email" id="checkout-email" placeholder="Ej: correo@ejemplo.com">
-
-        <label for="checkout-telefono">Teléfono (opcional)</label>
-        <input type="tel" id="checkout-telefono" placeholder="Ej: 999999999">
-
-        <div class="modal-botones">
-            <button class="btn-cancelar" onclick="cerrarCheckout()">Cancelar</button>
-            <button class="btn-confirmar" onclick="confirmarCompra()">Confirmar compra</button>
-        </div>
-
-        <p class="modal-total">TOTAL A PAGAR: <strong id="modal-total">S/ 0.00</strong></p>
-    </div>
         <div class="carrito-header">
             <h2>MI CARRITO</h2>
             <button class="carrito-cerrar" onclick="cerrarCarrito()">✕</button>
@@ -607,7 +665,90 @@
             </div>
             <button class="btn-finalizar" onclick="finalizarCompra()">FINALIZAR COMPRA</button>
         </div>
-            <!-- ========== MODAL DE ÉXITO ========== -->
+    </aside>
+
+    <!-- ========== OVERLAY DEL CHECKOUT ========== -->
+    <div class="overlay" id="overlay-checkout" onclick="cerrarCheckout()"></div>
+
+    <!-- ========== MODAL DE CHECKOUT ========== -->
+    <div class="modal-checkout" id="modal-checkout">
+        <h2>FINALIZAR COMPRA</h2>
+        <p class="modal-subtitulo">Completa tus datos para finalizar el pedido</p>
+
+        <label for="checkout-nombre">Nombre completo *</label>
+        <input type="text" id="checkout-nombre" placeholder="Ej: Juan Pérez" autocomplete="name">
+
+        <label for="checkout-dni">DNI *</label>
+        <input type="text" id="checkout-dni" placeholder="Ej: 12345678" autocomplete="off">
+
+        <label for="checkout-email">Email (opcional)</label>
+        <input type="email" id="checkout-email" placeholder="Ej: correo@ejemplo.com">
+
+        <label for="checkout-telefono">Teléfono (opcional)</label>
+        <input type="tel" id="checkout-telefono" placeholder="Ej: 999999999">
+
+        <label style="margin-top: 20px; font-weight: bold;">Método de pago *</label>
+        <div class="opciones-grupo">
+            <label class="opcion-pago">
+                <input type="radio" name="metodo_pago" value="yape" checked>
+                <span>📱 Yape</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="metodo_pago" value="plin">
+                <span>📱 Plin</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="metodo_pago" value="tarjeta">
+                <span>💳 Tarjeta</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="metodo_pago" value="transferencia">
+                <span>🏦 Transferencia</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="metodo_pago" value="contraentrega">
+                <span>💵 Contraentrega</span>
+            </label>
+        </div>
+
+        <label style="margin-top: 20px; font-weight: bold;">Tipo de envío *</label>
+        <div class="opciones-grupo">
+            <label class="opcion-pago">
+                <input type="radio" name="tipo_envio" value="recojo" checked onchange="actualizarTotalCheckout()">
+                <span>🏪 Recojo en tienda (S/ 0)</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="tipo_envio" value="delivery_lima" onchange="actualizarTotalCheckout()">
+                <span>🚚 Delivery Lima (S/ 10)</span>
+            </label>
+            <label class="opcion-pago">
+                <input type="radio" name="tipo_envio" value="delivery_provincia" onchange="actualizarTotalCheckout()">
+                <span>📦 Delivery Provincia (S/ 20)</span>
+            </label>
+        </div>
+
+        <div class="resumen-checkout">
+            <div class="resumen-linea">
+                <span>Subtotal:</span>
+                <span id="checkout-subtotal">S/ 0.00</span>
+            </div>
+            <div class="resumen-linea">
+                <span>Envío:</span>
+                <span id="checkout-envio">S/ 0.00</span>
+            </div>
+            <div class="resumen-linea total">
+                <span>TOTAL:</span>
+                <span id="modal-total">S/ 0.00</span>
+            </div>
+        </div>
+
+        <div class="modal-botones">
+            <button class="btn-cancelar" onclick="cerrarCheckout()">Cancelar</button>
+            <button class="btn-confirmar" onclick="confirmarCompra()">Confirmar compra</button>
+        </div>
+    </div>
+
+    <!-- ========== MODAL DE ÉXITO ========== -->
     <div class="modal-checkout" id="modal-exito" style="text-align:center;">
         <div style="font-size: 60px; color: #d4af37; margin-bottom: 10px;">✓</div>
         <h2>¡COMPRA REALIZADA!</h2>
@@ -619,8 +760,10 @@
         <button class="btn-confirmar" style="width: 100%;" onclick="cerrarExito()">Cerrar</button>
     </div>
 
-    <!-- ========== MODAL ASISTENTE DE TALLAS (IA) ========== -->
+    <!-- ========== OVERLAY DEL ASISTENTE ========== -->
     <div class="overlay" id="overlay-asistente" onclick="cerrarAsistente()"></div>
+
+    <!-- ========== MODAL ASISTENTE DE TALLAS (IA) ========== -->
     <div class="modal-checkout" id="modal-asistente">
         <h2>📏 ASISTENTE DE TALLAS</h2>
         <p class="modal-subtitulo">Ingresa tus medidas y nuestra IA te dirá tu talla perfecta</p>
@@ -650,7 +793,6 @@
             <p id="res-mensaje" style="font-size: 12px; color: #666; font-style: italic;">--</p>
         </div>
     </div>
-    </aside>
 
     <!-- ========== NOTIFICACIÓN ========== -->
     <div class="notificacion" id="notificacion">✓ Añadido al carrito</div>
@@ -845,23 +987,56 @@ const sinImagen = !p.imagen;
                 notif.classList.remove('mostrar');
             }, 2000);
         }
+        // ========== ACTUALIZAR TOTAL DEL CHECKOUT ==========
+        function actualizarTotalCheckout() {
+            const subtotal = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
-              // ========== FINALIZAR COMPRA (abre el modal) ==========
+            const tipoEnvio = document.querySelector('input[name="tipo_envio"]:checked').value;
+            let costoEnvio = 0;
+            if (tipoEnvio === 'delivery_lima') costoEnvio = 10;
+            else if (tipoEnvio === 'delivery_provincia') costoEnvio = 20;
+
+            document.getElementById('checkout-subtotal').textContent = 'S/ ' + subtotal.toFixed(2);
+            document.getElementById('checkout-envio').textContent = 'S/ ' + costoEnvio.toFixed(2);
+            document.getElementById('modal-total').textContent = 'S/ ' + (subtotal + costoEnvio).toFixed(2);
+        }
+
+        // ========== ACTUALIZAR TOTAL DEL CHECKOUT ==========
+        function actualizarTotalCheckout() {
+            const subtotal = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+
+            const tipoEnvioEl = document.querySelector('input[name="tipo_envio"]:checked');
+            let costoEnvio = 0;
+            if (tipoEnvioEl) {
+                const tipoEnvio = tipoEnvioEl.value;
+                if (tipoEnvio === 'delivery_lima') costoEnvio = 10;
+                else if (tipoEnvio === 'delivery_provincia') costoEnvio = 20;
+            }
+
+            const subtotalEl = document.getElementById('checkout-subtotal');
+            const envioEl = document.getElementById('checkout-envio');
+            const totalEl = document.getElementById('modal-total');
+
+            if (subtotalEl) subtotalEl.textContent = 'S/ ' + subtotal.toFixed(2);
+            if (envioEl) envioEl.textContent = 'S/ ' + costoEnvio.toFixed(2);
+            if (totalEl) totalEl.textContent = 'S/ ' + (subtotal + costoEnvio).toFixed(2);
+        }
+
+        // ========== FINALIZAR COMPRA (abre el modal) ==========
         function finalizarCompra() {
             if (carrito.length === 0) {
                 mostrarNotificacion('⚠ Tu carrito está vacío');
                 return;
             }
 
-            // Calcular total
-            const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-            document.getElementById('modal-total').textContent = 'S/ ' + total.toFixed(2);
-
             // Limpiar campos
             document.getElementById('checkout-nombre').value = '';
             document.getElementById('checkout-dni').value = '';
             document.getElementById('checkout-email').value = '';
             document.getElementById('checkout-telefono').value = '';
+
+            // Actualizar el resumen (subtotal + envío)
+            actualizarTotalCheckout();
 
             // Cerrar carrito lateral y abrir modal
             cerrarCarrito();
@@ -874,42 +1049,33 @@ const sinImagen = !p.imagen;
             document.getElementById('overlay-checkout').classList.remove('mostrar');
         }
 
-        // ========== CONFIRMAR COMPRA ==========
-        async function confirmarCompra() {
+          async function confirmarCompra() {
             const nombre = document.getElementById('checkout-nombre').value.trim();
             const dni = document.getElementById('checkout-dni').value.trim();
             const email = document.getElementById('checkout-email').value.trim();
             const telefono = document.getElementById('checkout-telefono').value.trim();
 
-            if (!nombre) {
-                mostrarNotificacion('⚠ Ingresa tu nombre');
-                return;
-            }
-            if (!dni) {
-                mostrarNotificacion('⚠ Ingresa tu DNI');
-                return;
-            }
+            const metodoPagoEl = document.querySelector('input[name="metodo_pago"]:checked');
+            const tipoEnvioEl = document.querySelector('input[name="tipo_envio"]:checked');
+
+            const metodoPago = metodoPagoEl ? metodoPagoEl.value : 'yape';
+            const tipoEnvio = tipoEnvioEl ? tipoEnvioEl.value : 'recojo';
+
+            if (!nombre) { mostrarNotificacion('⚠ Ingresa tu nombre'); return; }
+            if (!dni) { mostrarNotificacion('⚠ Ingresa tu DNI'); return; }
 
             try {
                 mostrarNotificacion('⏳ Procesando tu compra...');
 
-                // 1. Crear o buscar cliente
-                const clienteRes = await fetch(`${API}/clientes/`, {
+                const clienteRes = await fetch(API + '/clientes/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nombre: nombre,
-                        dni: dni,
-                        email: email,
-                        telefono: telefono,
-                        direccion: ''
-                    })
+                    body: JSON.stringify({ nombre: nombre, dni: dni, email: email, telefono: telefono, direccion: '' })
                 });
 
                 let cliente;
                 if (clienteRes.status === 400) {
-                    // DNI ya existe → buscar cliente
-                    const listaRes = await fetch(`${API}/clientes/`);
+                    const listaRes = await fetch(API + '/clientes/');
                     const lista = await listaRes.json();
                     cliente = lista.find(c => c.dni === dni);
                     if (!cliente) throw new Error('No se pudo registrar al cliente');
@@ -919,16 +1085,17 @@ const sinImagen = !p.imagen;
                     throw new Error('Error al registrar al cliente');
                 }
 
-                // 2. Crear la venta
                 const ventaData = {
                     cliente_id: cliente.id,
+                    metodo_pago: metodoPago,
+                    tipo_envio: tipoEnvio,
                     items: carrito.map(item => ({
                         producto_id: item.id,
                         cantidad: item.cantidad
                     }))
                 };
 
-                const ventaRes = await fetch(`${API}/crear-venta/`, {
+                const ventaRes = await fetch(API + '/crear-venta/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(ventaData)
@@ -941,7 +1108,6 @@ const sinImagen = !p.imagen;
 
                 const venta = await ventaRes.json();
 
-                // 3. Éxito: limpiar carrito
                 carrito = [];
                 localStorage.removeItem('carrito_vogue');
                 actualizarContador();

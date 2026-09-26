@@ -59,21 +59,41 @@ class Venta(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
+    METODOS_PAGO = [
+        ('yape', 'Yape'),
+        ('plin', 'Plin'),
+        ('tarjeta', 'Tarjeta de crédito/débito'),
+        ('transferencia', 'Transferencia bancaria'),
+        ('contraentrega', 'Pago contra entrega'),
+    ]
+
+    TIPOS_ENVIO = [
+        ('recojo', 'Recojo en tienda (gratis)'),
+        ('delivery_lima', 'Delivery Lima (S/ 10.00)'),
+        ('delivery_provincia', 'Delivery Provincia (S/ 20.00)'),
+    ]
+
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name='ventas')
     fecha = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
+
+    # NUEVOS CAMPOS
+    metodo_pago = models.CharField(max_length=20, choices=METODOS_PAGO, default='yape')
+    tipo_envio = models.CharField(max_length=20, choices=TIPOS_ENVIO, default='recojo')
+    costo_envio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    notas = models.TextField(blank=True)
 
     def __str__(self):
         return f"Venta #{self.id} - {self.cliente.nombre}"
-
+    
     def calcular_total(self):
-        total = sum(item.subtotal() for item in self.items.all())
-        self.total = total
+        self.subtotal = sum(item.subtotal() for item in self.items.all())
+        self.total = self.subtotal + self.costo_envio
         self.save()
-        return total
-
-
+        return self.total
+    
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name='items')
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)

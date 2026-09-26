@@ -22,10 +22,11 @@ class DetalleVentaInline(admin.TabularInline):
 
 @admin.register(Venta)
 class VentaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cliente', 'fecha', 'estado', 'total')
-    list_filter = ('estado', 'fecha')
+    list_display = ('id', 'cliente', 'fecha', 'estado', 'metodo_pago', 'tipo_envio', 'total')
+    list_filter = ('estado', 'metodo_pago', 'tipo_envio', 'fecha')
+    search_fields = ('cliente__nombre', 'cliente__dni')
     inlines = [DetalleVentaInline]
-
+    list_editable = ('estado',)
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):

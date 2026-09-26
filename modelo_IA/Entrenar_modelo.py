@@ -130,7 +130,6 @@ y_silueta_pred = modelo_silueta.predict(X_test)
 acc_silueta = accuracy_score(y_silueta_test, y_silueta_pred)
 print(f"\n📊 MODELO SILUETA - Accuracy: {acc_silueta:.4f} ({acc_silueta*100:.2f}%)")
 print(classification_report(y_silueta_test, y_silueta_pred, zero_division=0))
-
 # ============================================================
 # 6. GUARDAR
 # ============================================================
