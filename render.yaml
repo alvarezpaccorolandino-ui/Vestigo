@@ -3,6 +3,7 @@ services:
   - type: web
     name: vestigo-web
     env: python
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
@@ -21,6 +22,7 @@ services:
   - type: web
     name: vestigo-ia
     env: python
+    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn api_ia.main:app --host 0.0.0.0 --port $PORT"
     envVars:
