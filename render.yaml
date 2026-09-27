@@ -13,10 +13,6 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: vestigo-db
-          property: connectionString
 
   # Servicio 2: FastAPI (modelo IA)
   - type: web
@@ -28,9 +24,3 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.0
-
-databases:
-  - name: vestigo-db
-    plan: free
-    databaseName: vestigo
-    user: vestigo_user
