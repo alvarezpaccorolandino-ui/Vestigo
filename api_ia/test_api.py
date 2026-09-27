@@ -4,7 +4,7 @@ Pruebas Funcionales de la API de IA VESTIGO
 Verifica que los endpoints de la API FastAPI funcionen correctamente.
 Requiere que la API esté corriendo en http://127.0.0.1:8001
 
-Ejecutar: python api_ia/test_api.py
+Ejecutar: python api_IA/test_api.py
 
 Autor: Ronal + equipo VESTIGO
 Fecha: Septiembre 2026

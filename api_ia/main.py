@@ -4,7 +4,7 @@ API REST del Modelo de IA VESTIGO
 Expone el modelo de recomendación de tallas y siluetas
 a través de endpoints HTTP usando FastAPI.
 
-Ejecutar con: uvicorn api_ia.main:app --reload
+Ejecutar con: uvicorn api_IA.main:app --reload
 Documentación: http://127.0.0.1:8001/docs
 
 Autor: Ronal + equipo VESTIGO
@@ -40,8 +40,8 @@ app.add_middleware(
 # 2. CARGAR LOS MODELOS ENTRENADOS
 # ============================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RUTA_MODELO_TALLA = os.path.join(BASE_DIR, 'modelo_ia', 'artefactos', 'modelo_talla.pkl')
-RUTA_MODELO_SILUETA = os.path.join(BASE_DIR, 'modelo_ia', 'artefactos', 'modelo_silueta.pkl')
+RUTA_MODELO_TALLA = os.path.join(BASE_DIR, 'modelo_IA', 'artefactos', 'modelo_talla.pkl')
+RUTA_MODELO_SILUETA = os.path.join(BASE_DIR, 'modelo_IA', 'artefactos', 'modelo_silueta.pkl')
 
 try:
     modelo_talla = joblib.load(RUTA_MODELO_TALLA)
