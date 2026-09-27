@@ -1,3 +1,4 @@
+
 """
 Django settings for config project.
 
@@ -12,20 +13,30 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+import os
+import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECRET_KEY desde variable de entorno (Render la genera automáticamente)
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-ookk%(24q69)ui_p60bb9(#chbfn+0$5gka)ig6i&!m$=+5m4'
+)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+# DEBUG: False en producción, True solo en desarrollo
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ookk(%4qa@)ui_@p60bb9(#chbfn+085gka)i6g1=&9id$#cg%'
+# Hosts permitidos
+ALLOWED_HOSTS = ['*']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# CSRF trusted origins para Render
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+]
 
-ALLOWED_HOSTS = []
+# CORS
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -37,14 +48,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',       # ← Agrega
-    'corsheaders',          # ← Agrega
+    'rest_framework',
+    'corsheaders',
+    'whitenoise.runserver_nostatic',  # ← AGREGAR
     'core',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # ← Agrega arriba
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,8 +65,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-ROOT_URLCONF = 'config.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -134,3 +145,21 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # CORS (para conectar el HTML con la API)
 CORS_ALLOW_ALL_ORIGINS = True
+# ============================================================
+# CONFIGURACIÓN DE PRODUCCIÓN (RENDER)
+# ============================================================
+
+# Base de datos: si Render provee DATABASE_URL, usar PostgreSQL
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)
+    }
+
+# Archivos estáticos con whitenoise
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

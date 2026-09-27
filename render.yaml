@@ -1,0 +1,34 @@
+services:
+  # Servicio 1: Django (catálogo + admin + API)
+  - type: web
+    name: vestigo-web
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vestigo-db
+          property: connectionString
+
+  # Servicio 2: FastAPI (modelo IA)
+  - type: web
+    name: vestigo-ia
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn api_ia.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+
+databases:
+  - name: vestigo-db
+    plan: free
+    databaseName: vestigo
+    user: vestigo_user
