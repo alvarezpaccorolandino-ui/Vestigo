@@ -796,11 +796,11 @@
     <div class="notificacion" id="notificacion">✓ Añadido al carrito</div>
 
     <script>
-        const API = 'http://127.0.0.1:8000/api';
+        const API = window.location.origin + '/api';
         let productos = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_vogue')) || [];
         let filtroActual = 'todos';
-                const API_IA = 'http://127.0.0.1:8001';
+                const API_IA = 'https://vestigo-ia.onrender.com';
 
         // ========== CARGAR PRODUCTOS DESDE LA API ==========
         async function cargarProductos() {
